@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-warning mb-4 fw-bold">ADMIN CONTROL PANEL</h2>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-black border-warning text-center p-3">
+            <h5 class="text-muted">Total Customers</h5>
+            <h2 class="text-warning">{{ total_customers }}</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-black border-warning text-center p-3">
+            <h5 class="text-muted">Active Waiters</h5>
+            <h2 class="text-warning">{{ waiters|length }}</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-black border-warning text-center p-3">
+            <h5 class="text-muted">Available Rewards</h5>
+            <h2 class="text-warning">{{ rewards|length }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Staff Management -->
+    <div class="col-md-6 mb-4">
+        <div class="card bg-black border-secondary h-100">
+            <div class="card-body p-4">
+                <h4 class="text-warning mb-3">Add Waiter</h4>
+                <form action="{{ url_for('add_waiter') }}" method="POST" class="mb-4">
+                    <div class="mb-3">
+                        <input type="text" name="name" class="form-control bg-dark text-light border-secondary" placeholder="Waiter Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" name="phone_number" class="form-control bg-dark text-light border-secondary" placeholder="Phone Number" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password" class="form-control bg-dark text-light border-secondary" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold">ADD WAITER</button>
+                </form>
+
+                <h5 class="text-warning mt-4">Current Waiters</h5>
+                <ul class="list-group list-group-flush">
+                    {% for waiter in waiters %}
+                        <li class="list-group-item bg-transparent text-light border-secondary px-0">
+                            {{ waiter.name }} ({{ waiter.phone_number }})
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reward Management -->
+    <div class="col-md-6 mb-4">
+        <div class="card bg-black border-secondary h-100">
+            <div class="card-body p-4">
+                <h4 class="text-warning mb-3">Add Reward Item</h4>
+                <form action="{{ url_for('add_reward') }}" method="POST" class="mb-4">
+                    <div class="mb-3">
+                        <input type="text" name="name" class="form-control bg-dark text-light border-secondary" placeholder="Reward Name (e.g. Free Soda)" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="description" class="form-control bg-dark text-light border-secondary" placeholder="Description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" name="point_cost" class="form-control bg-dark text-light border-secondary" placeholder="Point Cost" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold">ADD REWARD</button>
+                </form>
+
+                <h5 class="text-warning mt-4">Current Rewards</h5>
+                <ul class="list-group list-group-flush">
+                    {% for reward in rewards %}
+                        <li class="list-group-item bg-transparent text-light border-secondary px-0 d-flex justify-content-between align-items-center">
+                            <span>{{ reward.name }}</span>
+                            <span class="badge bg-warning text-dark">{{ reward.point_cost }} pts</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Global Logs -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-black border-secondary shadow-lg">
+            <div class="card-body p-4">
+                <h4 class="text-warning mb-4">GLOBAL TRANSACTION LOGS</h4>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-sm small">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Customer</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Pts Earned</th>
+                                <th>Pts Redeemed</th>
+                                <th>Receipt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr>
+                                    <td>{{ tx.timestamp.strftime('%m-%d %H:%M') }}</td>
+                                    <td>{{ tx.customer_id }}</td> <!-- Could join for name -->
+                                    <td>{{ tx.transaction_type }}</td>
+                                    <td>{{ tx.amount }}</td>
+                                    <td>{{ tx.points_earned }}</td>
+                                    <td>{{ tx.points_redeemed }}</td>
+                                    <td>{{ tx.receipt_number }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

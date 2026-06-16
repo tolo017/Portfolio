@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card bg-black border-warning shadow-lg">
+            <div class="card-body p-5">
+                <h2 class="text-center text-warning mb-4 fw-bold">REGISTER</h2>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="phone_number" name="phone_number" required placeholder="e.g. 0712345678">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control bg-dark text-light border-secondary" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning fw-bold">REGISTER</button>
+                    </div>
+                </form>
+                <div class="mt-4 text-center">
+                    <p>Already have an account? <a href="{{ url_for('login') }}" class="text-warning">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

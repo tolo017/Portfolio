@@ -1,0 +1,108 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 399-225-005
+127.0.0.1 - - [16/Jun/2026 22:33:13] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:14] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:14] "GET /register HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:14] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:15] "[32mPOST /register HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:15] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:15] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:15] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:15] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[32mPOST /login HTTP/1.1[0m" 302 -
+/app/app.py:26: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  return User.query.get(int(user_id))
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[32mPOST /admin/add_reward HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[32mGET /logout HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:17] "[32mPOST /login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:17] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:17] "GET /customer/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:17] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+/app/app.py:146: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  receipt_number=f"REDEEM-{reward.id}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+127.0.0.1 - - [16/Jun/2026 22:33:18] "[32mPOST /customer/redeem/1 HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:18] "GET /customer/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:18] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "[32mPOST /login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:49] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:50] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:50] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:50] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:50] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:50] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:50] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:51] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:51] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:51] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:51] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:52] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:52] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:52] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:52] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:52] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:52] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:53] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:53] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:53] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:53] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:53] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:53] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "[32mPOST /waiter/dashboard HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "[32mGET /logout HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "[32mPOST /login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "GET /customer/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "[32mGET /logout HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:55] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "[32mPOST /login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+/app/app.py:255: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  receipt_number=f"FREE-MEAL-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+127.0.0.1 - - [16/Jun/2026 22:33:56] "[32mPOST /waiter/redeem_free_meal HTTP/1.1[0m" 302 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "GET /waiter/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [16/Jun/2026 22:33:56] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -

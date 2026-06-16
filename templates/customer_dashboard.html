@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Points Summary Card -->
+    <div class="col-md-4 mb-4">
+        <div class="card bg-black border-warning shadow-lg h-100">
+            <div class="card-body text-center p-4">
+                <h4 class="text-warning mb-3">YOUR POINTS</h4>
+                <h1 class="display-3 fw-bold text-light">{{ profile.total_points|round(1) }}</h1>
+                <p class="text-muted">Equivalent to KES {{ profile.total_points|round(1) }}</p>
+                <hr class="border-warning">
+                <div class="mt-4">
+                    <h5 class="text-warning">Free Meal Progress</h5>
+                    <div class="progress bg-dark mt-2" style="height: 25px;">
+                        <div class="progress-bar bg-warning text-dark fw-bold" role="progressbar"
+                             style="width: {{ (profile.qualifying_visits % 10) * 10 }}%;"
+                             aria-valuenow="{{ (profile.qualifying_visits % 10) * 10 }}" aria-valuemin="0" aria-valuemax="100">
+                             {{ profile.qualifying_visits % 10 }}/10 Visits
+                        </div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">10 visits (min 2000 KES) = 1 FREE MEAL</small>
+                </div>
+
+                {% if profile.qualifying_visits >= 10 %}
+                <div class="mt-4 p-3 border border-warning rounded bg-dark">
+                    <h5 class="text-warning mb-0"><i class="fas fa-crown"></i> FREE MEAL EARNED!</h5>
+                    <p class="small text-muted mb-0">Visit the restaurant and tell the waiter to redeem your 10th visit free meal.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="col-md-8 mb-4">
+        <div class="card bg-black border-secondary shadow-lg h-100">
+            <div class="card-body p-4">
+                <h4 class="text-warning mb-4">REDEEM YOUR POINTS</h4>
+                {% if recommendations %}
+                    <div class="row">
+                        {% for reward in recommendations %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-dark border-secondary h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="text-warning">{{ reward.name }}</h5>
+                                        <p class="small text-muted mb-3">{{ reward.description }}</p>
+                                        <div class="mt-auto">
+                                            <p class="fw-bold mb-2">{{ reward.point_cost }} Points</p>
+                                            <form action="{{ url_for('redeem_reward', reward_id=reward.id) }}" method="POST">
+                                                <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold">REDEEM NOW</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-gift fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Keep earning points to unlock amazing rewards!</p>
+                        <p class="small text-muted">Redeemable rewards will appear here when you have enough points.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transaction History -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-black border-secondary shadow-lg">
+            <div class="card-body p-4">
+                <h4 class="text-warning mb-4">RECENT ACTIVITY</h4>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Amount (KES)</th>
+                                <th>Points Earned</th>
+                                <th>Points Redeemed</th>
+                                <th>Receipt #</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr>
+                                    <td>{{ tx.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        {% if tx.transaction_type == 'earn' %}
+                                            <span class="badge bg-success">EARNED</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">REDEEMED</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ tx.amount }}</td>
+                                    <td class="text-success">+{{ tx.points_earned|round(1) }}</td>
+                                    <td class="text-danger">-{{ tx.points_redeemed|round(1) }}</td>
+                                    <td>{{ tx.receipt_number }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No activity yet. Start dining at Hash Grill!</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

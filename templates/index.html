@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center py-5">
+        <h1 class="display-4 text-warning fw-bold mb-4">Welcome to Hash Grill Loyalty</h1>
+        <p class="lead mb-5">Earn 1 point for every 100 KES spent. Reach 10 visits (min 2000 KES) for a FREE meal!</p>
+        <div class="d-grid gap-3">
+            <a href="{{ url_for('login') }}" class="btn btn-warning btn-lg fw-bold">LOG IN</a>
+            <a href="{{ url_for('register') }}" class="btn btn-outline-warning btn-lg fw-bold">CREATE ACCOUNT</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

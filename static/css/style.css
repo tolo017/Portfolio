@@ -1,0 +1,99 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-black {
+    background-color: #000000 !important;
+}
+
+.text-warning {
+    color: #ff9f1c !important;
+}
+
+.btn-warning {
+    background-color: #ff9f1c;
+    border-color: #ff9f1c;
+    color: #000;
+}
+
+.btn-warning:hover {
+    background-color: #e68a00;
+    border-color: #e68a00;
+    color: #000;
+}
+
+.btn-outline-warning {
+    color: #ff9f1c;
+    border-color: #ff9f1c;
+}
+
+.btn-outline-warning:hover {
+    background-color: #ff9f1c;
+    color: #000;
+}
+
+.border-warning {
+    border-color: #ff9f1c !important;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.form-control:focus {
+    background-color: #1a1a1a;
+    color: #fff;
+    border-color: #ff9f1c;
+    box-shadow: 0 0 0 0.25rem rgba(255, 159, 28, 0.25);
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.card {
+    border-radius: 20px;
+    border-width: 1px;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+.badge {
+    border-radius: 8px;
+    padding: 6px 12px;
+}
+
+/* Animations */
+.card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+
+.btn {
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.nav-link {
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #ff9f1c !important;
+}
