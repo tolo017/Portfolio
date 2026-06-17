@@ -1,0 +1,9 @@
+instance/
+__pycache__/
+*.pyc
+*.db
+.env
+.venv
+venv/
+app_output.log
+verification/

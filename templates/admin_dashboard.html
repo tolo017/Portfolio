@@ -115,7 +115,7 @@
                             {% for tx in transactions %}
                                 <tr>
                                     <td>{{ tx.timestamp.strftime('%m-%d %H:%M') }}</td>
-                                    <td>{{ tx.customer_id }}</td> <!-- Could join for name -->
+                                    <td>{{ tx.customer.name }}</td>
                                     <td>{{ tx.transaction_type }}</td>
                                     <td>{{ tx.amount }}</td>
                                     <td>{{ tx.points_earned }}</td>

@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
@@ -31,13 +31,15 @@ class LoyaltyProfile(db.Model):
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    customer = db.relationship('User', foreign_keys=[customer_id], backref='transactions_as_customer')
     waiter_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    waiter = db.relationship('User', foreign_keys=[waiter_id], backref='transactions_as_waiter')
     amount = db.Column(db.Float, nullable=False)
     points_earned = db.Column(db.Float, default=0.0)
     points_redeemed = db.Column(db.Float, default=0.0)
     receipt_number = db.Column(db.String(50), nullable=False)
     transaction_type = db.Column(db.String(20), nullable=False) # 'earn', 'redeem'
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class Reward(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, redirect, url_for, request, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.exc import IntegrityError
@@ -143,7 +143,7 @@ def redeem_reward(reward_id):
         amount=0,
         points_earned=0,
         points_redeemed=reward.point_cost,
-        receipt_number=f"REDEEM-{reward.id}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+        receipt_number=f"REDEEM-{reward.id}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
         transaction_type='redeem'
     )
 
@@ -252,7 +252,7 @@ def redeem_free_meal():
         amount=0,
         points_earned=0,
         points_redeemed=0,
-        receipt_number=f"FREE-MEAL-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+            receipt_number=f"FREE-MEAL-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
         transaction_type='redeem_free_meal'
     )
 
