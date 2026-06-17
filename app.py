@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, redirect, url_for, request, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -9,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from models import db, User, LoyaltyProfile, Transaction, Reward
 from functools import wraps
 
+load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-replace-in-prod')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hash_grill.db'
@@ -23,7 +25,7 @@ login_manager.login_message_category = 'info'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 # Decorators for role-based access
 def admin_required(f):
