@@ -9,6 +9,8 @@ from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.exc import IntegrityError
 from models import db, User, LoyaltyProfile, Transaction, Reward
 from functools import wraps
+from utils import SignatureManager, generate_receipt_code
+import json
 
 load_dotenv()
 app = Flask(__name__)
@@ -212,7 +214,12 @@ def admin_dashboard():
     rewards = Reward.query.all()
     transactions = Transaction.query.order_by(Transaction.timestamp.desc()).limit(20).all()
     total_customers = User.query.filter_by(role='customer').count()
-    return render_template('admin_dashboard.html', waiters=waiters, rewards=rewards, transactions=transactions, total_customers=total_customers)
+
+    # Generate examples of secure codes for the admin
+    pos_secret = os.environ.get('POS_SECRET_KEY', 'hash-grill-pos-sync-secret')
+    sample_code = generate_receipt_code("REC-SAMPLE", 2500, pos_secret)
+
+    return render_template('admin_dashboard.html', waiters=waiters, rewards=rewards, transactions=transactions, total_customers=total_customers, sample_code=sample_code)
 
 @app.route('/admin/add_waiter', methods=['POST'])
 @admin_required
@@ -263,6 +270,92 @@ def redeem_free_meal():
 
     flash(f'Free meal redeemed for {customer.name}! Qualifying visits reset.', 'success')
     return redirect(url_for('waiter_dashboard'))
+
+@app.route('/customer/claim_points', methods=['GET', 'POST'])
+@login_required
+def claim_points():
+    if request.method == 'POST':
+        receipt_number = request.form.get('receipt_number')
+        claimed_code = request.form.get('secure_code').upper()
+
+        tx = Transaction.query.filter_by(receipt_number=receipt_number, customer_id=1).first()
+
+        if not tx:
+            flash('Receipt not found or already claimed.', 'danger')
+            return redirect(url_for('claim_points'))
+
+        # Verify the secure code
+        pos_secret = os.environ.get('POS_SECRET_KEY', 'hash-grill-pos-sync-secret')
+        expected_code = generate_receipt_code(receipt_number, tx.amount, pos_secret)
+
+        if claimed_code != expected_code:
+            flash('Invalid secure code.', 'danger')
+            return redirect(url_for('claim_points'))
+
+        # Success! Assign points to user
+        tx.customer_id = current_user.id
+        current_user.profile.total_points += tx.points_earned
+        if tx.amount >= 2000:
+            current_user.profile.qualifying_visits += 1
+
+        db.session.commit()
+        flash(f'Success! {tx.points_earned} points added to your account.', 'success')
+        return redirect(url_for('customer_dashboard'))
+
+    return render_template('claim_points.html')
+
+@app.route('/api/pos/sync', methods=['POST'])
+@csrf.exempt # Exempt from CSRF because it uses HMAC signature for auth
+def pos_sync():
+    data = request.json
+    signature = request.headers.get('X-POS-Signature')
+
+    if not signature:
+        return {"error": "Missing signature"}, 401
+
+    sig_manager = SignatureManager()
+    if not sig_manager.verify_signature(data, signature):
+        return {"error": "Invalid signature"}, 401
+
+    # Process transactions
+    results = {"processed": 0, "errors": []}
+    transactions = data.get('transactions', [])
+
+    for tx_data in transactions:
+        receipt_num = tx_data.get('receipt_number')
+        amount = tx_data.get('amount')
+        phone = tx_data.get('phone_number') # May be null if not entered at POS
+
+        # Idempotency check
+        existing = Transaction.query.filter_by(receipt_number=receipt_num).first()
+        if existing:
+            continue
+
+        points_earned = amount / 100.0
+
+        # If phone provided, add directly to user
+        customer_id = 1 # System/Unclaimed default
+        if phone:
+            customer = User.query.filter_by(phone_number=phone, role='customer').first()
+            if customer:
+                customer_id = customer.id
+                customer.profile.total_points += points_earned
+                if amount >= 2000:
+                    customer.profile.qualifying_visits += 1
+
+        new_tx = Transaction(
+            customer_id=customer_id,
+            waiter_id=1, # System
+            amount=amount,
+            points_earned=points_earned,
+            receipt_number=receipt_num,
+            transaction_type='pos_sync'
+        )
+        db.session.add(new_tx)
+        results['processed'] += 1
+
+    db.session.commit()
+    return results, 200
 
 @app.route('/admin/add_reward', methods=['POST'])
 @admin_required
