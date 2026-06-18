@@ -38,21 +38,11 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def waiter_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role not in ['waiter', 'admin']:
-            abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
-
 @app.route('/')
 def index():
     if current_user.is_authenticated:
         if current_user.role == 'admin':
             return redirect(url_for('admin_dashboard'))
-        elif current_user.role == 'waiter':
-            return redirect(url_for('waiter_dashboard'))
         else:
             return redirect(url_for('customer_dashboard'))
     return render_template('index.html')
@@ -86,18 +76,17 @@ def register():
         try:
             user = User(name=name, phone_number=phone_number, password=hashed_password, role='customer')
             db.session.add(user)
-            db.session.flush() # Get user id without committing
+            db.session.flush()
 
-            # Create loyalty profile
             profile = LoyaltyProfile(user_id=user.id)
             db.session.add(profile)
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            flash('Phone number already registered. Please login or use another number.', 'danger')
+            flash('Phone number already registered.', 'danger')
             return redirect(url_for('register'))
 
-        flash('Your account has been created! You are now able to log in', 'success')
+        flash('Account created! Please log in.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -106,7 +95,6 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-# Dashboard Routes (Placeholders)
 @app.route('/customer/dashboard')
 @login_required
 def customer_dashboard():
@@ -116,13 +104,16 @@ def customer_dashboard():
     profile = current_user.profile
     transactions = Transaction.query.filter_by(customer_id=current_user.id).order_by(Transaction.timestamp.desc()).limit(10).all()
 
-    # Recommendations logic:
-    # 1 point = 1 KES worth of value (similar to Bonga points where 10 points ~ 2 KES, or supermarkets)
-    # Let's say 1 point = 1 KES for simplicity in redemption too.
-    # We will fetch available rewards that the user can afford.
+    # 10 points = 50 KES
+    cash_value = (profile.total_points // 10) * 50
+
     recommended_rewards = Reward.query.filter(Reward.point_cost <= profile.total_points).all()
 
-    return render_template('customer_dashboard.html', profile=profile, transactions=transactions, recommendations=recommended_rewards)
+    return render_template('customer_dashboard.html',
+                           profile=profile,
+                           transactions=transactions,
+                           recommendations=recommended_rewards,
+                           cash_value=cash_value)
 
 @app.route('/customer/redeem/<int:reward_id>', methods=['POST'])
 @login_required
@@ -134,16 +125,14 @@ def redeem_reward(reward_id):
     profile = current_user.profile
 
     if profile.total_points < reward.point_cost:
-        flash('Not enough points to redeem this reward.', 'danger')
+        flash('Not enough points.', 'danger')
         return redirect(url_for('customer_dashboard'))
 
-    # Process redemption
     profile.total_points -= reward.point_cost
 
-    # Record transaction
     transaction = Transaction(
         customer_id=current_user.id,
-            waiter_id=1, # Default to admin or system if customer initiates
+        waiter_id=1,
         amount=0,
         points_earned=0,
         points_redeemed=reward.point_cost,
@@ -154,122 +143,48 @@ def redeem_reward(reward_id):
     db.session.add(transaction)
     db.session.commit()
 
-    flash(f'Success! You have redeemed {reward.name}. Show this message to the waiter to claim.', 'success')
+    flash(f'Success! Redeemed {reward.name}.', 'success')
     return redirect(url_for('customer_dashboard'))
 
-@app.route('/waiter/dashboard', methods=['GET', 'POST'])
-@waiter_required
+@app.route('/customer/redeem_cash', methods=['POST'])
 @login_required
-def waiter_dashboard():
-    if request.method == 'POST':
-        phone_number = request.form.get('phone_number')
-        try:
-            amount = float(request.form.get('amount'))
-            if amount <= 0:
-                raise ValueError
-        except ValueError:
-            flash('Invalid amount. Please enter a positive number.', 'danger')
-            return redirect(url_for('waiter_dashboard'))
+def redeem_cash():
+    profile = current_user.profile
+    points_to_redeem = (profile.total_points // 10) * 10
+    if points_to_redeem < 10:
+        flash('Minimum 10 points required for cash redemption.', 'warning')
+        return redirect(url_for('customer_dashboard'))
 
-        receipt_number = request.form.get('receipt_number')
+    cash_value = (points_to_redeem // 10) * 50
+    profile.total_points -= points_to_redeem
 
-        customer = User.query.filter_by(phone_number=phone_number, role='customer').first()
-        if not customer:
-            flash(f'Customer with phone {phone_number} not found.', 'danger')
-            return redirect(url_for('waiter_dashboard'))
+    transaction = Transaction(
+        customer_id=current_user.id,
+        waiter_id=1,
+        amount=0,
+        points_earned=0,
+        points_redeemed=points_to_redeem,
+        receipt_number=f"CASH-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+        transaction_type='redeem_cash'
+    )
+    db.session.add(transaction)
+    db.session.commit()
 
-        # Calculate points: 1 point per 100 KES
-        points_earned = amount / 100.0
-
-        # Check if visit qualifies for free meal counter (>= 2000 KES)
-        if amount >= 2000:
-            customer.profile.qualifying_visits += 1
-            if customer.profile.qualifying_visits >= 10:
-                flash(f'CONGRATULATIONS! {customer.name} has reached 10 visits. They have earned a FREE MEAL!', 'success')
-
-        customer.profile.total_points += points_earned
-
-        transaction = Transaction(
-            customer_id=customer.id,
-            waiter_id=current_user.id,
-            amount=amount,
-            points_earned=points_earned,
-            receipt_number=receipt_number,
-            transaction_type='earn'
-        )
-
-        db.session.add(transaction)
-        db.session.commit()
-
-        flash(f'Success! {points_earned} points added to {customer.name}.', 'success')
-        return redirect(url_for('waiter_dashboard'))
-
-    return render_template('waiter_dashboard.html')
+    flash(f'Success! You have redeemed {points_to_redeem} points for KES {cash_value} discount. Show this to the cashier.', 'success')
+    return redirect(url_for('customer_dashboard'))
 
 @app.route('/admin/dashboard')
 @admin_required
 @login_required
 def admin_dashboard():
-    waiters = User.query.filter_by(role='waiter').all()
     rewards = Reward.query.all()
-    transactions = Transaction.query.order_by(Transaction.timestamp.desc()).limit(20).all()
+    transactions = Transaction.query.order_by(Transaction.timestamp.desc()).limit(50).all()
     total_customers = User.query.filter_by(role='customer').count()
 
-    # Generate examples of secure codes for the admin
     pos_secret = os.environ.get('POS_SECRET_KEY', 'hash-grill-pos-sync-secret')
     sample_code = generate_receipt_code("REC-SAMPLE", 2500, pos_secret)
 
-    return render_template('admin_dashboard.html', waiters=waiters, rewards=rewards, transactions=transactions, total_customers=total_customers, sample_code=sample_code)
-
-@app.route('/admin/add_waiter', methods=['POST'])
-@admin_required
-@login_required
-def add_waiter():
-    name = request.form.get('name')
-    phone_number = request.form.get('phone_number')
-    password = request.form.get('password')
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    waiter = User(name=name, phone_number=phone_number, password=hashed_password, role='waiter')
-    db.session.add(waiter)
-    db.session.commit()
-
-    flash(f'Waiter {name} added successfully.', 'success')
-    return redirect(url_for('admin_dashboard'))
-
-@app.route('/waiter/redeem_free_meal', methods=['POST'])
-@waiter_required
-@login_required
-def redeem_free_meal():
-    phone_number = request.form.get('phone_number')
-    customer = User.query.filter_by(phone_number=phone_number, role='customer').first()
-
-    if not customer:
-        flash('Customer not found.', 'danger')
-        return redirect(url_for('waiter_dashboard'))
-
-    if customer.profile.qualifying_visits < 10:
-        flash('Customer does not have enough qualifying visits for a free meal.', 'warning')
-        return redirect(url_for('waiter_dashboard'))
-
-    # Reset visits and record transaction
-    customer.profile.qualifying_visits -= 10
-
-    transaction = Transaction(
-        customer_id=customer.id,
-        waiter_id=current_user.id,
-        amount=0,
-        points_earned=0,
-        points_redeemed=0,
-            receipt_number=f"FREE-MEAL-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
-        transaction_type='redeem_free_meal'
-    )
-
-    db.session.add(transaction)
-    db.session.commit()
-
-    flash(f'Free meal redeemed for {customer.name}! Qualifying visits reset.', 'success')
-    return redirect(url_for('waiter_dashboard'))
+    return render_template('admin_dashboard.html', rewards=rewards, transactions=transactions, total_customers=total_customers, sample_code=sample_code)
 
 @app.route('/customer/claim_points', methods=['GET', 'POST'])
 @login_required
@@ -284,7 +199,6 @@ def claim_points():
             flash('Receipt not found or already claimed.', 'danger')
             return redirect(url_for('claim_points'))
 
-        # Verify the secure code
         pos_secret = os.environ.get('POS_SECRET_KEY', 'hash-grill-pos-sync-secret')
         expected_code = generate_receipt_code(receipt_number, tx.amount, pos_secret)
 
@@ -292,20 +206,19 @@ def claim_points():
             flash('Invalid secure code.', 'danger')
             return redirect(url_for('claim_points'))
 
-        # Success! Assign points to user
         tx.customer_id = current_user.id
         current_user.profile.total_points += tx.points_earned
-        if tx.amount >= 2000:
+        if tx.amount >= 2500:
             current_user.profile.qualifying_visits += 1
 
         db.session.commit()
-        flash(f'Success! {tx.points_earned} points added to your account.', 'success')
+        flash(f'Success! {tx.points_earned} points added.', 'success')
         return redirect(url_for('customer_dashboard'))
 
     return render_template('claim_points.html')
 
 @app.route('/api/pos/sync', methods=['POST'])
-@csrf.exempt # Exempt from CSRF because it uses HMAC signature for auth
+@csrf.exempt
 def pos_sync():
     data = request.json
     signature = request.headers.get('X-POS-Signature')
@@ -317,35 +230,34 @@ def pos_sync():
     if not sig_manager.verify_signature(data, signature):
         return {"error": "Invalid signature"}, 401
 
-    # Process transactions
     results = {"processed": 0, "errors": []}
     transactions = data.get('transactions', [])
 
     for tx_data in transactions:
         receipt_num = tx_data.get('receipt_number')
         amount = tx_data.get('amount')
-        phone = tx_data.get('phone_number') # May be null if not entered at POS
+        phone = tx_data.get('phone_number')
 
-        # Idempotency check
         existing = Transaction.query.filter_by(receipt_number=receipt_num).first()
         if existing:
             continue
 
-        points_earned = amount / 100.0
+        # 1 point per 1000 KES
+        points_earned = amount / 1000.0
 
-        # If phone provided, add directly to user
-        customer_id = 1 # System/Unclaimed default
+        customer_id = 1
         if phone:
             customer = User.query.filter_by(phone_number=phone, role='customer').first()
             if customer:
                 customer_id = customer.id
                 customer.profile.total_points += points_earned
-                if amount >= 2000:
+                # Free meal on 10th visit of 2500+ KES
+                if amount >= 2500:
                     customer.profile.qualifying_visits += 1
 
         new_tx = Transaction(
             customer_id=customer_id,
-            waiter_id=1, # System
+            waiter_id=1,
             amount=amount,
             points_earned=points_earned,
             receipt_number=receipt_num,
@@ -369,13 +281,45 @@ def add_reward():
     db.session.add(reward)
     db.session.commit()
 
-    flash(f'Reward {name} added successfully.', 'success')
+    flash(f'Reward {name} added.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/redeem_free_meal', methods=['POST'])
+@admin_required
+@login_required
+def admin_redeem_free_meal():
+    phone_number = request.form.get('phone_number')
+    customer = User.query.filter_by(phone_number=phone_number, role='customer').first()
+
+    if not customer:
+        flash('Customer not found.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+
+    if customer.profile.qualifying_visits < 10:
+        flash('Not enough qualifying visits.', 'warning')
+        return redirect(url_for('admin_dashboard'))
+
+    customer.profile.qualifying_visits -= 10
+
+    transaction = Transaction(
+        customer_id=customer.id,
+        waiter_id=current_user.id,
+        amount=0,
+        points_earned=0,
+        points_redeemed=0,
+        receipt_number=f"FREE-MEAL-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+        transaction_type='redeem_free_meal'
+    )
+
+    db.session.add(transaction)
+    db.session.commit()
+
+    flash(f'Free meal redeemed for {customer.name}!', 'success')
     return redirect(url_for('admin_dashboard'))
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Create initial admin if not exists
         admin = User.query.filter_by(role='admin').first()
         if not admin:
             hashed_pw = bcrypt.generate_password_hash('admin123').decode('utf-8')

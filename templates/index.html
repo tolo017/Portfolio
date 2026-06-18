@@ -1,14 +1,51 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 text-center py-5">
-        <h1 class="display-4 text-warning fw-bold mb-4">Welcome to Hash Grill Loyalty</h1>
-        <p class="lead mb-5">Earn 1 point for every 100 KES spent. Reach 10 visits (min 2000 KES) for a FREE meal!</p>
-        <div class="d-grid gap-3">
-            <a href="{{ url_for('login') }}" class="btn btn-warning btn-lg fw-bold">LOG IN</a>
-            <a href="{{ url_for('register') }}" class="btn btn-outline-warning btn-lg fw-bold">CREATE ACCOUNT</a>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-8 text-center">
+        <div class="mb-4">
+            <i class="fas fa-fire-alt text-orange" style="font-size: 5rem;"></i>
+        </div>
+        <h1 class="display-3 fw-bold text-white mb-2">HASH GRILL</h1>
+        <h2 class="h4 text-orange mb-5 letter-spacing-wide">LOYALTY & REWARDS</h2>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-5">
+                <div class="card bg-black border-orange hover-lift h-100">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <i class="fas fa-user-plus text-orange mb-3" style="font-size: 2rem;"></i>
+                            <h3 class="h4 fw-bold">New Member?</h3>
+                            <p class="text-white-50">Join our loyalty family and start earning points today!</p>
+                        </div>
+                        <a href="{{ url_for('register') }}" class="btn btn-orange w-100 mt-3">Create Account</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card bg-black border-secondary hover-lift h-100">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <i class="fas fa-sign-in-alt text-white-50 mb-3" style="font-size: 2rem;"></i>
+                            <h3 class="h4 fw-bold">Existing Member</h3>
+                            <p class="text-white-50">Check your points balance and redeem exclusive rewards.</p>
+                        </div>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-orange w-100 mt-3">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 text-white-50 small">
+            <p><i class="fas fa-qrcode me-2"></i>Part of your Linktree QR experience at the reception.</p>
         </div>
     </div>
 </div>
+
+<style>
+.letter-spacing-wide {
+    letter-spacing: 5px;
+}
+</style>
 {% endblock %}

@@ -1,87 +1,98 @@
-import requests
-import json
-import time
-import sqlite3
-import os
-import hmac
-import hashlib
+import requests, json, time, sqlite3, os, hmac, hashlib, re
 
 # Configuration
-SERVER_URL = "http://127.0.0.1:5000/api/pos/sync"
+# For production, change to your Vercel URL
+SERVER_URL = "http://localhost:5000/api/pos/sync"
 SECRET_KEY = "hash-grill-pos-sync-secret"
-LOCAL_DB = "pos_queue.db"
+# Directory where your POS software saves receipt text files
+WATCH_DIRECTORY = "./receipts_out"
 
 class POSBridge:
     def __init__(self):
-        self.init_db()
+        # Create local queue for offline support
+        self.db = sqlite3.connect("pos_queue.db")
+        self.db.execute('CREATE TABLE IF NOT EXISTS queue (id INTEGER PRIMARY KEY, data TEXT)')
 
-    def init_db(self):
-        conn = sqlite3.connect(LOCAL_DB)
-        conn.execute('''CREATE TABLE IF NOT EXISTS queue
-                       (id INTEGER PRIMARY KEY, data TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-        conn.commit()
-        conn.close()
+        if not os.path.exists(WATCH_DIRECTORY):
+            os.makedirs(WATCH_DIRECTORY)
 
-    def generate_signature(self, data):
-        data_string = json.dumps(data, sort_keys=True).encode('utf-8')
-        return hmac.new(SECRET_KEY.encode('utf-8'), data_string, hashlib.sha256).hexdigest()
-
-    def queue_transaction(self, receipt_number, amount, phone_number=None):
-        """Simulates capturing a receipt and adding it to the local offline queue."""
-        tx = {
-            "receipt_number": receipt_number,
-            "amount": amount,
-            "phone_number": phone_number
-        }
-        conn = sqlite3.connect(LOCAL_DB)
-        conn.execute("INSERT INTO queue (data) VALUES (?)", (json.dumps(tx),))
-        conn.commit()
-        conn.close()
-        print(f"Captured receipt {receipt_number}. Queued for sync.")
-
-    def sync_to_server(self):
-        """Attempts to send all queued transactions to the server."""
-        conn = sqlite3.connect(LOCAL_DB)
-        cursor = conn.execute("SELECT id, data FROM queue LIMIT 50")
-        rows = cursor.fetchall()
-
-        if not rows:
-            conn.close()
-            return
-
-        transactions = []
-        ids = []
-        for row in rows:
-            ids.append(row[0])
-            transactions.append(json.loads(row[1]))
-
-        payload = {"transactions": transactions}
-        signature = self.generate_signature(payload)
-
+    def parse_receipt(self, path):
+        """
+        Extracts Receipt Number, Total Amount, and Customer Phone from a text file.
+        Modify regex patterns to match your POS software's receipt format.
+        """
         try:
-            headers = {"X-POS-Signature": signature, "Content-Type": "application/json"}
-            response = requests.post(SERVER_URL, json=payload, headers=headers, timeout=10)
+            with open(path, 'r') as f:
+                content = f.read()
 
-            if response.status_code == 200:
-                print(f"Successfully synced {len(transactions)} transactions.")
-                # Clear from queue
-                conn.execute(f"DELETE FROM queue WHERE id IN ({','.join(map(str, ids))})")
-                conn.commit()
-            else:
-                print(f"Server error during sync: {response.status_code}")
+            # Pattern examples:
+            # Receipt #: REC-12345
+            # Total: 2,500.00
+            # Customer: 0712345678
+
+            r_num = re.search(r"Receipt\s*#?:\s*([A-Z0-9-]+)", content, re.I)
+            # Remove commas from amount before converting to float
+            a_amt = re.search(r"Total\s*:\s*([\d,.]+)", content, re.I)
+            p_num = re.search(r"Phone\s*:\s*(\d{10,})", content, re.I)
+
+            if r_num and a_amt:
+                amount_str = a_amt.group(1).replace(',', '')
+                return {
+                    "receipt_number": r_num.group(1),
+                    "amount": float(amount_str),
+                    "phone_number": p_num.group(1) if p_num else None
+                }
         except Exception as e:
-            print(f"Sync failed (offline): {e}")
+            print(f"Error parsing {path}: {e}")
+        return None
 
-        conn.close()
+    def sign_payload(self, payload):
+        payload_json = json.dumps(payload, sort_keys=True)
+        return hmac.new(SECRET_KEY.encode(), payload_json.encode(), hashlib.sha256).hexdigest()
+
+    def run(self):
+        print(f"Hash Grill POS Bridge Started...")
+        print(f"Watching: {WATCH_DIRECTORY}")
+
+        while True:
+            # 1. Watch for new receipt files
+            for f in os.listdir(WATCH_DIRECTORY):
+                if f.endswith(".txt"):
+                    filepath = os.path.join(WATCH_DIRECTORY, f)
+                    data = self.parse_receipt(filepath)
+                    if data:
+                        self.db.execute("INSERT INTO queue (data) VALUES (?)", (json.dumps(data),))
+                        self.db.commit()
+                        print(f"Queued Receipt: {data['receipt_number']}")
+                    os.remove(filepath)
+
+            # 2. Try Syncing Queue to Server
+            cursor = self.db.execute("SELECT id, data FROM queue LIMIT 20")
+            rows = cursor.fetchall()
+
+            if rows:
+                payload = {"transactions": [json.loads(r[1]) for r in rows]}
+                signature = self.sign_payload(payload)
+
+                try:
+                    res = requests.post(
+                        SERVER_URL,
+                        json=payload,
+                        headers={"X-POS-Signature": signature},
+                        timeout=5
+                    )
+
+                    if res.status_code == 200:
+                        ids = ",".join([str(r[0]) for r in rows])
+                        self.db.execute(f"DELETE FROM queue WHERE id IN ({ids})")
+                        self.db.commit()
+                        print(f"Successfully synced {len(rows)} transactions.")
+                    else:
+                        print(f"Server error ({res.status_code}): {res.text}")
+                except Exception as e:
+                    print(f"Sync failed (Offline?): {e}")
+
+            time.sleep(10) # Wait 10 seconds before next check
 
 if __name__ == "__main__":
-    bridge = POSBridge()
-
-    # Simulation: Capture some test receipts
-    bridge.queue_transaction("REC-POS-001", 1500, "0711223344")
-    bridge.queue_transaction("REC-POS-002", 3000, None) # Unclaimed
-
-    # Continuous Sync Loop
-    while True:
-        bridge.sync_to_server()
-        time.sleep(30) # Wait 30 seconds before next sync attempt
+    POSBridge().run()

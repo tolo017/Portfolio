@@ -1,122 +1,135 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <!-- Points Summary Card -->
-    <div class="col-md-4 mb-4">
-        <div class="card bg-black border-warning shadow-lg h-100">
-            <div class="card-body text-center p-4">
-                <h4 class="text-warning mb-3">YOUR POINTS</h4>
-                <h1 class="display-3 fw-bold text-light">{{ profile.total_points|round(1) }}</h1>
-                <p class="text-muted">Equivalent to KES {{ profile.total_points|round(1) }}</p>
-                <hr class="border-warning">
-                <div class="mt-4">
-                    <h5 class="text-warning">Free Meal Progress</h5>
-                    <div class="progress bg-dark mt-2" style="height: 25px;">
-                        <div class="progress-bar bg-warning text-dark fw-bold" role="progressbar"
-                             style="width: {{ (profile.qualifying_visits % 10) * 10 }}%;"
-                             aria-valuenow="{{ (profile.qualifying_visits % 10) * 10 }}" aria-valuemin="0" aria-valuemax="100">
-                             {{ profile.qualifying_visits % 10 }}/10 Visits
-                        </div>
-                    </div>
-                    <small class="text-muted mt-2 d-block">10 visits (min 2000 KES) = 1 FREE MEAL</small>
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Hero Section -->
+        <div class="card mb-4 bg-black border-orange overflow-hidden">
+            <div class="card-body p-5 text-center position-relative">
+                <div style="opacity: 0.1; position: absolute; top: -20px; right: -20px; font-size: 150px; transform: rotate(15deg);">
+                    <i class="fas fa-utensils text-orange"></i>
                 </div>
-
-                {% if profile.qualifying_visits >= 10 %}
-                <div class="mt-4 p-3 border border-warning rounded bg-dark">
-                    <h5 class="text-warning mb-0"><i class="fas fa-crown"></i> FREE MEAL EARNED!</h5>
-                    <p class="small text-muted mb-0">Visit the restaurant and tell the waiter to redeem your 10th visit free meal.</p>
-                </div>
-                {% endif %}
+                <h1 class="display-5 fw-bold text-orange mb-3">Welcome, {{ current_user.name }}!</h1>
+                <p class="lead text-white-50">Your loyalty is being rewarded. Every visit counts!</p>
             </div>
         </div>
-    </div>
 
-    <!-- Recommendations -->
-    <div class="col-md-8 mb-4">
-        <div class="card bg-black border-secondary shadow-lg h-100">
-            <div class="card-body p-4">
-                <h4 class="text-warning mb-4">REDEEM YOUR POINTS</h4>
-                {% if recommendations %}
-                    <div class="row">
-                        {% for reward in recommendations %}
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-dark border-secondary h-100">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="text-warning">{{ reward.name }}</h5>
-                                        <p class="small text-muted mb-3">{{ reward.description }}</p>
-                                        <div class="mt-auto">
-                                            <p class="fw-bold mb-2">{{ reward.point_cost }} Points</p>
-                                            <form action="{{ url_for('redeem_reward', reward_id=reward.id) }}" method="POST">
-                                                <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold">REDEEM NOW</button>
-                                            </form>
+        <div class="row g-4">
+            <!-- Points Summary -->
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-black text-orange border-bottom border-secondary">
+                        <i class="fas fa-coins me-2"></i>Loyalty Points
+                    </div>
+                    <div class="card-body text-center py-4">
+                        <div class="mb-2 text-white-50">Current Balance</div>
+                        <div class="display-3 fw-bold text-orange mb-1">{{ "%.1f"|format(profile.total_points) }}</div>
+                        <div class="text-white-50 small mb-4">1 Point per KES 1000 spent</div>
+
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('claim_points') }}" class="btn btn-orange">
+                                <i class="fas fa-plus-circle me-2"></i>Claim Points from Receipt
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Free Meal Progress -->
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-black text-orange border-bottom border-secondary">
+                        <i class="fas fa-gift me-2"></i>Free Meal Tracker
+                    </div>
+                    <div class="card-body text-center py-4">
+                        <div class="mb-3 text-white-50">Visits of KES 2500+</div>
+                        <div class="h1 fw-bold text-white mb-3">{{ profile.qualifying_visits }} / 10</div>
+                        <div class="progress mb-3" style="height: 12px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 role="progressbar"
+                                 style="width: {{ (profile.qualifying_visits / 10) * 100 }}%"></div>
+                        </div>
+                        <p class="small text-white-50">Reach 10 qualifying visits to get a <span class="text-orange fw-bold">FREE MEAL</span>!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Redemption -->
+            <div class="col-md-12">
+                <div class="card border-orange">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h4 class="text-orange fw-bold mb-1">Instant Cash Discount</h4>
+                            <p class="mb-0 text-white-50">Every 10 points = KES 50 discount on your bill.</p>
+                        </div>
+                        <div class="text-end">
+                            <div class="h3 fw-bold text-white">Value: KES {{ cash_value }}</div>
+                            <form action="{{ url_for('redeem_cash') }}" method="POST">
+                                <button type="submit" class="btn btn-outline-orange mt-2" {% if cash_value < 50 %}disabled{% endif %}>
+                                    Redeem Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-black text-orange border-bottom border-secondary">
+                        <i class="fas fa-star me-2"></i>Special Rewards
+                    </div>
+                    <div class="card-body">
+                        {% if recommendations %}
+                            <div class="row row-cols-1 row-cols-md-2 g-3">
+                                {% for reward in recommendations %}
+                                <div class="col">
+                                    <div class="card h-100 bg-black border-secondary">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-orange">{{ reward.name }}</h5>
+                                            <p class="card-text small text-white-50">{{ reward.description }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                <span class="badge bg-orange">{{ reward.point_cost }} Points</span>
+                                                <form action="{{ url_for('redeem_reward', reward_id=reward.id) }}" method="POST">
+                                                    <button type="submit" class="btn btn-sm btn-orange">Redeem</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
+                        {% else %}
+                            <p class="text-center text-white-50 my-4">Keep eating at Hash Grill to unlock special rewards!</p>
+                        {% endif %}
                     </div>
-                {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-gift fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Keep earning points to unlock amazing rewards!</p>
-                        <p class="small text-muted">Redeemable rewards will appear here when you have enough points.</p>
-                    </div>
-                {% endif %}
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Transaction History -->
-<div class="row">
-    <div class="col-12 mb-4">
-        <div class="card bg-black border-warning shadow-lg text-center p-4">
-            <h5 class="text-warning mb-3">HAVE A RECEIPT?</h5>
-            <p class="text-muted">Did the waiter forget to add your points? Claim them manually using your receipt.</p>
-            <a href="{{ url_for('claim_points') }}" class="btn btn-outline-warning fw-bold px-5">CLAIM POINTS NOW</a>
-        </div>
-    </div>
-
-    <div class="col-12">
-        <div class="card bg-black border-secondary shadow-lg">
-            <div class="card-body p-4">
-                <h4 class="text-warning mb-4">RECENT ACTIVITY</h4>
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Amount (KES)</th>
-                                <th>Points Earned</th>
-                                <th>Points Redeemed</th>
-                                <th>Receipt #</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <!-- Recent Activity -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-black text-orange border-bottom border-secondary">
+                        <i class="fas fa-history me-2"></i>Recent Activity
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
                             {% for tx in transactions %}
-                                <tr>
-                                    <td>{{ tx.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
-                                    <td>
-                                        {% if tx.transaction_type == 'earn' %}
-                                            <span class="badge bg-success">EARNED</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">REDEEMED</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ tx.amount }}</td>
-                                    <td class="text-success">+{{ tx.points_earned|round(1) }}</td>
-                                    <td class="text-danger">-{{ tx.points_redeemed|round(1) }}</td>
-                                    <td>{{ tx.receipt_number }}</td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">No activity yet. Start dining at Hash Grill!</td>
-                                </tr>
+                            <li class="list-group-item bg-transparent text-white-50 border-secondary">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="small fw-bold text-white">{{ tx.transaction_type|capitalize }}</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">{{ tx.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+                                    </div>
+                                    <span class="text-{{ 'orange' if tx.points_earned > 0 else 'danger' }}">
+                                        {{ '+' if tx.points_earned > 0 else '-' }}{{ tx.points_earned if tx.points_earned > 0 else tx.points_redeemed }}
+                                    </span>
+                                </div>
+                            </li>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

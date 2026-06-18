@@ -1,27 +1,36 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card bg-black border-warning shadow-lg">
-            <div class="card-body p-5">
-                <h2 class="text-center text-warning mb-4 fw-bold">LOGIN</h2>
+        <div class="card shadow-lg border-orange">
+            <div class="card-header bg-black text-center py-4">
+                <h3 class="mb-0 text-orange fw-bold">Customer Login</h3>
+                <p class="text-white-50 mb-0 small mt-2">Welcome back to Hash Grill</p>
+            </div>
+            <div class="card-body p-4">
                 <form method="POST">
                     <div class="mb-3">
-                        <label for="phone_number" class="form-label">Phone Number</label>
-                        <input type="text" class="form-control bg-dark text-light border-secondary" id="phone_number" name="phone_number" required placeholder="e.g. 0712345678">
+                        <label class="form-label text-white-50">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black border-secondary text-orange"><i class="fas fa-phone"></i></span>
+                            <input type="text" name="phone_number" class="form-control" placeholder="07XXXXXXXX" required autofocus>
+                        </div>
                     </div>
                     <div class="mb-4">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control bg-dark text-light border-secondary" id="password" name="password" required>
+                        <label class="form-label text-white-50">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black border-secondary text-orange"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        </div>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-warning fw-bold">LOG IN</button>
+                        <button type="submit" class="btn btn-orange">Login to Dashboard</button>
                     </div>
                 </form>
-                <div class="mt-4 text-center">
-                    <p>Don't have an account? <a href="{{ url_for('register') }}" class="text-warning">Register here</a></p>
-                </div>
+            </div>
+            <div class="card-footer bg-black text-center py-3 border-top border-secondary">
+                <p class="mb-0 text-white-50 small">New customer? <a href="{{ url_for('register') }}" class="text-orange fw-bold text-decoration-none">Create Account</a></p>
             </div>
         </div>
     </div>
