@@ -21,11 +21,11 @@ class LoyaltyProfile(db.Model):
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
+    amount = db.Column(db.Float, nullable=False, default=0.0)
     points_earned = db.Column(db.Float, default=0.0)
     points_redeemed = db.Column(db.Float, default=0.0)
-    receipt_number = db.Column(db.String(50), unique=True, nullable=False)
-    transaction_type = db.Column(db.String(20), nullable=False)
+    receipt_number = db.Column(db.String(100), unique=True, nullable=False)
+    transaction_type = db.Column(db.String(50), nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class Reward(db.Model):

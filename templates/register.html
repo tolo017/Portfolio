@@ -1,43 +1,34 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="row justify-content-center">
+<div class="row g-4 justify-content-center">
     <div class="col-md-5">
-        <div class="card shadow-lg border-orange">
-            <div class="card-header bg-black text-center py-4">
-                <h3 class="mb-0 text-orange fw-bold">Join Loyalty</h3>
-                <p class="text-white-50 mb-0 small mt-2">Start earning points on every meal</p>
+        <div class="card p-4 border-orange shadow-lg">
+            <div class="text-center mb-4">
+                <i class="fas fa-user-plus text-orange fs-1 mb-2"></i>
+                <h2 class="h3 fw-bold text-white mb-0">Join Loyalty</h2>
+                <p class="text-white-50 small">Start earning points at Hash Grill</p>
             </div>
-            <div class="card-body p-4">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label text-white-50">Full Name</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-black border-secondary text-orange"><i class="fas fa-user"></i></span>
-                            <input type="text" name="name" class="form-control" placeholder="John Doe" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white-50">Phone Number</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-black border-secondary text-orange"><i class="fas fa-phone"></i></span>
-                            <input type="text" name="phone_number" class="form-control" placeholder="07XXXXXXXX" required>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label text-white-50">Create Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-black border-secondary text-orange"><i class="fas fa-lock"></i></span>
-                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                        </div>
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-orange">Register Now</button>
-                    </div>
-                </form>
-            </div>
-            <div class="card-footer bg-black text-center py-3 border-top border-secondary">
-                <p class="mb-0 text-white-50 small">Already have an account? <a href="{{ url_for('login') }}" class="text-orange fw-bold text-decoration-none">Login Here</a></p>
+
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label small text-white-50">Full Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-white-50">Phone Number</label>
+                    <input type="text" name="phone_number" class="form-control" placeholder="07XXXXXXXX" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small text-white-50">Create Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-orange w-100 py-3 fw-bold">Create Account</button>
+            </form>
+
+            <div class="text-center mt-4 pt-3 border-top border-dark">
+                <span class="text-white-50 small">Already a member?</span>
+                <a href="{{ url_for('login') }}" class="text-orange text-decoration-none fw-bold ms-1">Login Here</a>
             </div>
         </div>
     </div>

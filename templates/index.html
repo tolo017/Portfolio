@@ -1,51 +1,46 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-    <div class="col-md-8 text-center">
-        <div class="mb-4">
-            <i class="fas fa-fire-alt text-orange" style="font-size: 5rem;"></i>
-        </div>
-        <h1 class="display-3 fw-bold text-white mb-2">HASH GRILL</h1>
-        <h2 class="h4 text-orange mb-5 letter-spacing-wide">LOYALTY & REWARDS</h2>
+<div class="text-center py-lg-5 mt-4 mt-lg-5">
+    <div class="mb-4 animate-fire">
+        <i class="fas fa-fire-alt text-orange" style="font-size: 6rem;"></i>
+    </div>
+    <h1 class="display-1 text-white mb-2">HASH GRILL</h1>
+    <h2 class="h5 text-orange mb-5 letter-spacing-wide">PREMIUM LOYALTY & REWARDS</h2>
 
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-5">
-                <div class="card bg-black border-orange hover-lift h-100">
-                    <div class="card-body p-4 d-flex flex-column justify-content-between">
-                        <div>
-                            <i class="fas fa-user-plus text-orange mb-3" style="font-size: 2rem;"></i>
-                            <h3 class="h4 fw-bold">New Member?</h3>
-                            <p class="text-white-50">Join our loyalty family and start earning points today!</p>
-                        </div>
-                        <a href="{{ url_for('register') }}" class="btn btn-orange w-100 mt-3">Create Account</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="card bg-black border-secondary hover-lift h-100">
-                    <div class="card-body p-4 d-flex flex-column justify-content-between">
-                        <div>
-                            <i class="fas fa-sign-in-alt text-white-50 mb-3" style="font-size: 2rem;"></i>
-                            <h3 class="h4 fw-bold">Existing Member</h3>
-                            <p class="text-white-50">Check your points balance and redeem exclusive rewards.</p>
-                        </div>
-                        <a href="{{ url_for('login') }}" class="btn btn-outline-orange w-100 mt-3">Login</a>
-                    </div>
+    <div class="row g-4 justify-content-center mt-3">
+        <div class="col-md-5 col-lg-4">
+            <div class="card h-100 p-4 border-orange">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="fas fa-user-plus text-orange mb-3 fs-1"></i>
+                    <h3 class="h4 fw-bold">New Member?</h3>
+                    <p class="text-white-50 small mb-4">Join our family and start earning on every meal.</p>
+                    <a href="{{ url_for('register') }}" class="btn btn-orange w-100 py-3">Join Now</a>
                 </div>
             </div>
         </div>
-
-        <div class="mt-5 text-white-50 small">
-            <p><i class="fas fa-qrcode me-2"></i>Part of your Linktree QR experience at the reception.</p>
+        <div class="col-md-5 col-lg-4">
+            <div class="card h-100 p-4">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="fas fa-sign-in-alt text-white-50 mb-3 fs-1"></i>
+                    <h3 class="h4 fw-bold">Existing Member</h3>
+                    <p class="text-white-50 small mb-4">Check your points and redeem exclusive rewards.</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-orange w-100 py-3">Member Login</a>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <div class="mt-5 pt-lg-5 text-white-50 small">
+        <p><i class="fas fa-qrcode me-2 text-orange"></i>Part of your Linktree QR experience at the reception.</p>
     </div>
 </div>
 
 <style>
-.letter-spacing-wide {
-    letter-spacing: 5px;
+.letter-spacing-wide { letter-spacing: 5px; }
+.animate-fire { animation: flicker 2s infinite; }
+@keyframes flicker {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
 }
 </style>
 {% endblock %}

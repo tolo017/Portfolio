@@ -1,36 +1,34 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card border-orange shadow-lg">
-            <div class="card-header bg-black text-center py-4">
-                <h2 class="text-orange fw-bold mb-0">Claim Your Points</h2>
-                <p class="text-white-50 mt-2">Enter receipt details to add points to your account</p>
+<div class="row g-4 justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4 border-orange">
+            <div class="text-center mb-4">
+                <i class="fas fa-receipt text-orange fs-1 mb-2"></i>
+                <h2 class="h3 fw-bold text-white mb-0">Claim Your Points</h2>
+                <p class="text-white-50 small">Enter details from your printed receipt</p>
             </div>
-            <div class="card-body p-4">
-                <div class="alert bg-dark text-white-50 border-secondary small mb-4">
-                    <i class="fas fa-info-circle me-2 text-orange"></i>
-                    You can find the <strong>Receipt Number</strong> and <strong>Secure Code</strong> at the bottom of your printed Hash Grill receipt.
+
+            <div class="alert bg-black border border-dark text-white-50 small mb-4 py-3">
+                <i class="fas fa-info-circle text-orange me-2"></i>
+                Find your 8-digit secure code at the bottom of your Hash Grill receipt.
+            </div>
+
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label small text-white-50">Receipt Number</label>
+                    <input type="text" name="receipt_number" class="form-control text-uppercase" placeholder="REC-XXXXX" required>
                 </div>
-
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label text-white-50">Receipt Number</label>
-                        <input type="text" name="receipt_number" class="form-control form-control-lg text-uppercase" placeholder="E.G. REC-12345" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label text-white-50">8-Character Secure Code</label>
-                        <input type="text" name="secure_code" class="form-control form-control-lg text-uppercase" placeholder="A1B2C3D4" maxlength="8" required>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-orange btn-lg">Add Points</button>
-                        <a href="{{ url_for('customer_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
-                    </div>
-                </form>
-            </div>
+                <div class="mb-4">
+                    <label class="form-label small text-white-50">8-Digit Secure Code</label>
+                    <input type="text" name="secure_code" class="form-control text-uppercase" placeholder="A1B2C3D4" maxlength="8" required>
+                </div>
+                <button type="submit" class="btn btn-orange w-100 py-3 fw-bold">Verify & Add Points</button>
+                <a href="{{ url_for('customer_dashboard') }}" class="btn btn-link text-white-50 w-100 mt-3 text-decoration-none small">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </form>
         </div>
     </div>
 </div>
