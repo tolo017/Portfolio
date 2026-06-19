@@ -14,14 +14,17 @@ from utils import SignatureManager, generate_receipt_code
 load_dotenv()
 app = Flask(__name__)
 
-# --- VERCEL CONFIGURATION ---
-# Use an external Database URL (Postgres) in production.
-# SQLite will not persist on Vercel because it's serverless.
+# --- DATABASE CONFIGURATION ---
+# Local: Uses SQLite. Vercel: Uses Postgres (Neon/Supabase).
 database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Default to local SQLite if no DATABASE_URL is set
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hash_grill.db'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///hash_grill.db'
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'hash-grill-production-secret-replace-me')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -43,6 +46,17 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# --- INITIALIZATION HOOK ---
+@app.before_request
+def create_tables():
+    # Automatically setup DB on first request
+    db.create_all()
+    if not User.query.filter_by(role='admin').first():
+        hashed_pw = bcrypt.generate_password_hash('admin123').decode('utf-8')
+        admin = User(name='Admin', phone_number='0700000000', password=hashed_pw, role='admin')
+        db.session.add(admin)
+        db.session.commit()
+
 # --- ROUTES ---
 
 @app.route('/')
@@ -63,7 +77,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, request.form.get('password')):
             login_user(user)
             return redirect(url_for('index'))
-        flash('Login Unsuccessful. Check phone and password.', 'danger')
+        flash('Login failed. Check phone and password.', 'danger')
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -80,12 +94,14 @@ def register():
             flash('Account created! Please log in.', 'success')
             return redirect(url_for('login'))
         except IntegrityError:
-            db.session.rollback(); flash('Phone number already registered.', 'danger')
+            db.session.rollback()
+            flash('Phone number already registered.', 'danger')
     return render_template('register.html')
 
 @app.route('/logout')
 def logout():
-    logout_user(); return redirect(url_for('index'))
+    logout_user()
+    return redirect(url_for('index'))
 
 @app.route('/customer/dashboard')
 @login_required
@@ -103,6 +119,7 @@ def customer_dashboard():
 def claim_points():
     if request.method == 'POST':
         r_num = request.form.get('receipt_number'); code = request.form.get('secure_code').upper()
+        # Find unclaimed receipt (customer_id 1 is system default)
         tx = Transaction.query.filter_by(receipt_number=r_num, customer_id=1).first()
         if tx:
             pos_secret = os.environ.get('POS_SECRET_KEY', 'hash-grill-pos-sync-secret')
@@ -179,16 +196,6 @@ def pos_sync():
                 if t['amount'] >= 2500: user.profile.qualifying_visits += 1
             db.session.add(Transaction(customer_id=cid, amount=t['amount'], points_earned=pts, receipt_number=t['receipt_number'], transaction_type='pos_sync'))
     db.session.commit(); return {"status": "ok"}, 200
-
-# Vercel needs this wrapper for create_all()
-@app.before_request
-def create_tables():
-    # Only run this once or if db is empty
-    # For Postgres production, it's better to use migrations, but this is 48-hr ready.
-    db.create_all()
-    if not User.query.filter_by(role='admin').first():
-        db.session.add(User(name='Admin', phone_number='0700000000', password=bcrypt.generate_password_hash('admin123').decode('utf-8'), role='admin'))
-        db.session.commit()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
