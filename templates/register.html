@@ -6,29 +6,30 @@
             <div class="text-center mb-4">
                 <i class="fas fa-user-plus text-orange fs-1 mb-2"></i>
                 <h2 class="h3 fw-bold text-white mb-0">Join Loyalty</h2>
-                <p class="text-white-50 small">Start earning points at Hash Grill</p>
+                <p class="text-white-50 small">Fill in your details below to start earning points.</p>
             </div>
 
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-3">
-                    <label class="form-label small text-white-50">Full Name</label>
+                    <label class="form-label small text-white-50">What is your Full Name?</label>
                     <input type="text" name="name" class="form-control" placeholder="John Doe" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label small text-white-50">Phone Number</label>
-                    <input type="text" name="phone_number" class="form-control" placeholder="07XXXXXXXX" required>
+                    <label class="form-label small text-white-50">What is your Phone Number?</label>
+                    <input type="text" name="phone_number" class="form-control" placeholder="e.g. 0712345678" required>
+                    <div class="form-text text-white-50" style="font-size: 0.7rem;">We will use this to track your points automatically.</div>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label small text-white-50">Create Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                    <label class="form-label small text-white-50">Choose a Secure Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Create a password" required>
                 </div>
-                <button type="submit" class="btn btn-orange w-100 py-3 fw-bold">Create Account</button>
+                <button type="submit" class="btn btn-orange w-100 py-3 fw-bold">Register & Start Earning</button>
             </form>
 
             <div class="text-center mt-4 pt-3 border-top border-dark">
-                <span class="text-white-50 small">Already a member?</span>
-                <a href="{{ url_for('login') }}" class="text-orange text-decoration-none fw-bold ms-1">Login Here</a>
+                <span class="text-white-50 small">Already have an account?</span>
+                <a href="{{ url_for('login') }}" class="text-orange text-decoration-none fw-bold ms-1">Login to My Account</a>
             </div>
         </div>
     </div>
