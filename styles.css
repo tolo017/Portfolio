@@ -230,8 +230,6 @@ header .container {
 .about-image img:hover {
     transform: scale(1.02);
     box-shadow: 25px 25px 0 var(--border);
-    border-radius: 10px;
-    box-shadow: 20px 20px 0 var(--light);
 }
 
 .about-text p {
@@ -288,7 +286,7 @@ header .container {
     transform: scale(1.05) translateY(-10px);
 }
 
-.pricing-card.featured h3,
+.pricing-card.featured h3, 
 .pricing-card.featured .price {
     color: var(--white);
 }
@@ -446,7 +444,7 @@ header .container {
     font-weight: 500;
 }
 
-.form-group input,
+.form-group input, 
 .form-group textarea {
     width: 100%;
     padding: 12px;
@@ -535,7 +533,7 @@ footer {
     .about-grid, .contact-grid {
         grid-template-columns: 1fr;
     }
-
+    
     .hero h1 {
         font-size: 2.5rem;
     }
@@ -564,11 +562,11 @@ footer {
         text-align: center;
         margin-left: 0;
     }
-
+    
     .hamburger {
         display: block;
     }
-
+    
     .footer-grid {
         grid-template-columns: 1fr;
     }
