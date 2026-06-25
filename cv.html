@@ -45,6 +45,22 @@
             padding: 40px;
         }
 
+        .profile-img-container {
+            width: 100%;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            filter: brightness(1.05) contrast(1.02);
+        }
+
         .main-content {
             padding: 40px;
         }
@@ -195,6 +211,9 @@
 
     <div class="cv-container">
         <div class="sidebar">
+            <div class="profile-img-container">
+                <img src="assets/img/profile.jpg" alt="Tolo Stamford Otieno" class="profile-img">
+            </div>
             <div class="section">
                 <h2 class="section-title">Contact</h2>
                 <div class="contact-item"><i class="fas fa-phone"></i> +254 715 460 269</div>

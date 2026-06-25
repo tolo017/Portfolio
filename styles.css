@@ -219,6 +219,17 @@ header .container {
 
 .about-image img {
     width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 20px 20px 0 var(--light);
+    filter: brightness(1.05) contrast(1.02);
+    transition: var(--transition);
+}
+
+.about-image img:hover {
+    transform: scale(1.02);
+    box-shadow: 25px 25px 0 var(--border);
     border-radius: 10px;
     box-shadow: 20px 20px 0 var(--light);
 }
