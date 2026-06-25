@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
-
+    
     if (hamburger) {
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
             hamburger.classList.toggle('active');
-
+            
             // Animate hamburger lines
             const lines = hamburger.querySelectorAll('div');
             if (navLinks.classList.contains('active')) {
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
+    
     // Close mobile menu when clicking a link
     document.querySelectorAll('.nav-links a').forEach(link => {
         link.addEventListener('click', () => {
@@ -34,17 +34,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+    
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
-
+            
             const targetId = this.getAttribute('href');
             if (targetId === '#') return;
-
+            
             const targetElement = document.querySelector(targetId);
-
+            
             if (targetElement) {
                 window.scrollTo({
                     top: targetElement.offsetTop - 80,
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+    
     // Header background change on scroll
     const header = document.querySelector('header');
     window.addEventListener('scroll', () => {
@@ -68,17 +68,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form submission with basic feedback
     const contactForm = document.getElementById('contactForm');
-
+    
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
+            
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
-
+            
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
-
+            
             // Simulate form processing
             setTimeout(() => {
                 alert(`Thank you! Your message has been sent successfully. I'll get back to you soon.`);
