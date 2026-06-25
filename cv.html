@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Tolo Stamford Otieno</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00b894;
+            --dark: #2d3436;
+            --text: #2d3436;
+            --muted: #636e72;
+            --white: #ffffff;
+            --bg: #f5f6fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 40px 20px;
+        }
+
+        .cv-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+        }
+
+        .sidebar {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 40px;
+        }
+
+        .profile-img-container {
+            width: 100%;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            filter: brightness(1.05) contrast(1.02);
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+
+        .sidebar .section-title {
+            color: var(--white);
+            border-bottom-color: var(--primary);
+        }
+
+        .name-header {
+            margin-bottom: 30px;
+        }
+
+        .name-header h1 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .name-header p {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contact-item {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .skill-list {
+            list-style: none;
+        }
+
+        .skill-list li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .skill-list li::before {
+            content: "•";
+            color: var(--primary);
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .exp-item {
+            margin-bottom: 25px;
+        }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .exp-role {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .exp-company {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .exp-date {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .exp-desc {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 5px;
+            list-style-position: inside;
+        }
+
+        .exp-desc li {
+            margin-bottom: 3px;
+        }
+
+        .education-item {
+            margin-bottom: 15px;
+        }
+
+        .edu-school {
+            font-weight: 700;
+            display: block;
+        }
+
+        .edu-date {
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+
+        @media print {
+            body { padding: 0; background: none; }
+            .cv-container { box-shadow: none; }
+            .btn-print { display: none; }
+        }
+
+        .btn-print {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-print" onclick="window.print()">Print CV</button>
+
+    <div class="cv-container">
+        <div class="sidebar">
+            <div class="profile-img-container">
+                <img src="assets/img/profile.jpg" alt="Tolo Stamford Otieno" class="profile-img">
+            </div>
+            <div class="section">
+                <h2 class="section-title">Contact</h2>
+                <div class="contact-item"><i class="fas fa-phone"></i> +254 715 460 269</div>
+                <div class="contact-item"><i class="fas fa-envelope"></i> otibomb98@gmail.com</div>
+                <div class="contact-item"><i class="fas fa-map-marker-alt"></i> Nairobi, Kenya</div>
+                <div class="contact-item"><i class="fab fa-github"></i> github.com/tolo017</div>
+                <div class="contact-item"><i class="fab fa-linkedin"></i> linkedin.com/in/tolootieno</div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Education</h2>
+                <div class="education-item">
+                    <span class="edu-school">Sawagongo High School</span>
+                    <span class="edu-date">2015 - 2018 | KCSE</span>
+                </div>
+                <div class="education-item">
+                    <span class="edu-school">Yath Rateng' Primary</span>
+                    <span class="edu-date">2014 | KCPE</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Certifications</h2>
+                <ul class="skill-list" style="color: rgba(255,255,255,0.9);">
+                    <li>PLP - AI for Software Eng (2025)</li>
+                    <li>IBM Cybersecurity</li>
+                    <li>CISCO Ethical Hacking</li>
+                    <li>ALX - Virtual Assistant</li>
+                    <li>CERTIFIED SECURE</li>
+                    <li>CISCO Cybersecurity</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Expertise</h2>
+                <ul class="skill-list" style="color: rgba(255,255,255,0.9);">
+                    <li>AI Prompting (Python/Rust)</li>
+                    <li>Network Config (MikroTik/Cisco)</li>
+                    <li>Full-stack Development</li>
+                    <li>Cybersecurity & SOC Analysis</li>
+                    <li>Linux Administration</li>
+                    <li>Fiber Splicing & CCTV</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Languages</h2>
+                <p style="font-size: 0.9rem;">English (Fluent)</p>
+                <p style="font-size: 0.9rem;">Swahili (Fluent)</p>
+                <p style="font-size: 0.9rem;">Spanish (Basic)</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="name-header">
+                <h1>TOLO STAMFORD OTIENO</h1>
+                <p>AI Prompt, Cybersecurity and Network Engineer</p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Profile</h2>
+                <p style="font-size: 0.9rem; color: var(--muted);">
+                    Highly skilled AI Prompt Engineer (Python and Rust), Software Engineering and Cybersecurity professional with 4+ years of experience in network engineering. Motivated and detail-oriented, seeking to leverage technical expertise in machine learning, SOC analysis, and network troubleshooting to enhance system efficiency and customer satisfaction. Founder and CEO of a local solar-powered cloud startup.
+                </p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Experience</h2>
+
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <span class="exp-role">Founder & CEO</span>
+                        <span class="exp-date">2024 - PRESENT</span>
+                    </div>
+                    <div class="exp-company">Local Solar-Powered Cloud Startup</div>
+                    <ul class="exp-desc">
+                        <li>Developing off-grid, sustainable cloud solutions for local data sovereignty.</li>
+                    </ul>
+                </div>
+
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <span class="exp-role">Network Engineer & Team Leader</span>
+                        <span class="exp-date">2019 - PRESENT</span>
+                    </div>
+                    <div class="exp-company">Wish Cable Television</div>
+                    <ul class="exp-desc">
+                        <li>Configured and maintained MikroTik & Cisco routers.</li>
+                        <li>Conducted fibre cable splicing and resolved network outages promptly.</li>
+                        <li>Led teams in CCTV installations and structured cabling for enterprise clients.</li>
+                        <li>Increased company sales by expanding clientele through strategic solutions.</li>
+                    </ul>
+                </div>
+
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <span class="exp-role">IT Support Technician</span>
+                        <span class="exp-date">2019 (FEB - SEP)</span>
+                    </div>
+                    <div class="exp-company">New Image College, Mombasa</div>
+                    <ul class="exp-desc">
+                        <li>Maintained college website and campus network infrastructure.</li>
+                        <li>Assisted in setting up LAN/WAN connections and maintaining IT equipment.</li>
+                        <li>Provided technical assistance to staff and students.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Featured Projects</h2>
+                <div class="exp-item">
+                    <div class="exp-role">Eco-Sawa</div>
+                    <div class="exp-desc">Helps reduce food waste through quick user-to-user sharing.</div>
+                </div>
+                <div class="exp-item">
+                    <div class="exp-role">Health Monitoring System</div>
+                    <div class="exp-desc">Tracks health activity and alerts users instantly.</div>
+                </div>
+                <div class="exp-item">
+                    <div class="exp-role">Zawadi-Hub</div>
+                    <div class="exp-desc">AI tool that helps shops keep customers coming back.</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">References</h2>
+                <p style="font-size: 0.9rem; color: var(--muted);">Available upon request.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
