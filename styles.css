@@ -217,7 +217,7 @@ header .container {
     align-items: center;
 }
 
-.about-image img {
+.profile-img {
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
@@ -227,7 +227,7 @@ header .container {
     transition: var(--transition);
 }
 
-.about-image img:hover {
+.about-image .profile-img:hover {
     transform: scale(1.02);
     box-shadow: 25px 25px 0 var(--border);
 }
@@ -235,6 +235,16 @@ header .container {
 .about-text p {
     margin-bottom: 20px;
     color: var(--text-muted);
+}
+
+.about-header {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.about-header h2 {
+    display: block;
+    padding-bottom: 10px;
 }
 
 .skill-tags {
@@ -434,6 +444,10 @@ header .container {
     border-radius: 10px;
 }
 
+.contact-details {
+    margin-bottom: 20px;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
@@ -575,4 +589,5 @@ footer {
 /* Utility Classes */
 .text-center { text-align: center; }
 .mb-2 { margin-bottom: 2rem; }
+.mt-3 { margin-top: 3rem; }
 .bg-light { background-color: var(--light); }
